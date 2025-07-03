@@ -51,7 +51,7 @@ case 'delete':
 }
 
 if ( !is_null( $action ) ) {
-	$href = page_url( 'championship-list.php', [
+	$href = page_url( 'contestant.php', [
 		'organization' => $organization->name,
 		'team' => $team?->index,
 		'contestant' => $contestant->index,
@@ -60,10 +60,18 @@ if ( !is_null( $action ) ) {
 	exit;
 }
 
-$page = new Page( 'Δήλωση Συμμετοχής' );
+$page = new Page();
 
 $page->body_add( function() use ( $organization, $team, $contestant ): void {
-	echo sprintf( '<div class="m-2">%s</div>', $contestant->name ) . "\n";
+	echo '<div class="d-flex flex-row justify-content-between align-items-center">' . "\n";
+	echo '<h2 class="m-2">Διαγωνιζόμενος</h2>' . "\n";
+	$href = page_url( 'team.php', [
+		'organization' => $organization->name,
+		'team' => $team?->index,
+	] );
+	echo sprintf( '<a href="%s" class="m-2 btn btn-secondary bi bi-arrow-left"></a>', $href ) . "\n";
+	echo '</div>' . "\n";
+	echo sprintf( '<div class="m-2">%s</div>', contestantLabel( $contestant ) ) . "\n";
 	$championshipList = enumerated( $organization->json->championshipList );
 	foreach ( $championshipList as $championship ) {
 		if ( !championshipValid( $championship->value ) )
@@ -78,14 +86,14 @@ $page->body_add( function() use ( $organization, $team, $contestant ): void {
 		$unit = count( $unit ) === 1 ? $unit[0] : NULL;
 		if ( !is_null( $unit ) ) {
 			echo '<div class="m-2 border rounded d-flex flex-row p-1">' . "\n";
-			$href = page_url( 'championship-list.php', [
+			$href = page_url( 'contestant.php', [
 				'organization' => $organization->name,
 				'team' => $team?->index,
 				'contestant' => $contestant->index,
 				'action' => 'delete',
 				'championship' => $championship->index,
 			] );
-			echo sprintf( '<a class="bi-dash-lg link-danger m-1" href="%s"></a>', $href ) . "\n";
+			echo sprintf( '<a class="bi bi-dash-lg link-danger m-1" href="%s"></a>', $href ) . "\n";
 			foreach ( $unit->contestantList as $cid ) {
 				$c = $organization->json->contestantList[$cid];
 				echo '<div class="m-1 border-start"></div>' . "\n";
@@ -97,7 +105,7 @@ $page->body_add( function() use ( $organization, $team, $contestant ): void {
 				if ( count( $unit->contestantList ) >= $championship->value->unitCap )
 					continue;
 				echo '<div class="m-2 border rounded d-flex flex-row p-1">' . "\n";
-				$href = page_url( 'championship-list.php', [
+				$href = page_url( 'contestant.php', [
 					'organization' => $organization->name,
 					'team' => $team?->index,
 					'contestant' => $contestant->index,
@@ -105,7 +113,7 @@ $page->body_add( function() use ( $organization, $team, $contestant ): void {
 					'championship' => $championship->index,
 					'unit' => $uid,
 				] );
-				echo sprintf( '<a class="bi-plus-lg link-success m-1" href="%s"></a>', $href ) . "\n";
+				echo sprintf( '<a class="bi bi-plus-lg link-success m-1" href="%s"></a>', $href ) . "\n";
 				foreach ( $unit->contestantList as $cid ) {
 					$c = $organization->json->contestantList[$cid];
 					echo '<div class="m-1 border-start"></div>' . "\n";
@@ -114,14 +122,14 @@ $page->body_add( function() use ( $organization, $team, $contestant ): void {
 				echo '</div>' . "\n";
 			}
 			echo '<div class="m-2 border rounded d-flex flex-row p-1">' . "\n";
-			$href = page_url( 'championship-list.php', [
+			$href = page_url( 'contestant.php', [
 				'organization' => $organization->name,
 				'team' => $team?->index,
 				'contestant' => $contestant->index,
 				'action' => 'insert',
 				'championship' => $championship->index,
 			] );
-			echo sprintf( '<a class="bi-plus-lg link-success m-1" href="%s"></a>', $href ) . "\n";
+			echo sprintf( '<a class="bi bi-plus-lg link-success m-1" href="%s"></a>', $href ) . "\n";
 			echo '</div>' . "\n";
 		}
 		echo '</div>' . "\n";
