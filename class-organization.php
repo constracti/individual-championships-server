@@ -51,6 +51,23 @@ class Organization {
 		return $organization;
 	}
 
+	static function delete( string $name, string $password ): void {
+		Organization::filterName( $name );
+		$path = self::PATH . '/' . $name . '.json';
+		if ( !file_exists( $path ) )
+			exit( 'Organization::delete: file_exists' );
+		$text = file_get_contents( $path );
+		if ( $text === FALSE )
+			exit( 'Organization::delete: file_get_contents' );
+		$json = json_decode( $text );
+		if ( is_null( $json ) )
+			exit( 'Organization::delete: json_decode' );
+		if ( !password_verify( $password, $json->hash ) )
+			exit( 'Organization::delete: password_verify' );
+		if  ( unlink( $path ) === FALSE )
+			exit( 'Organization::delete: unlink' );
+	}
+
 	static function load(): Organization {
 		$name = requestStr( 'organization' );
 		Organization::filterName( $name );

@@ -20,7 +20,7 @@ $page->body_add( function(): void {
 	echo '<div class="m-2">' . "\n";
 	echo '<label class="form-label" for="name">Όνομα</label>' . "\n";
 	echo '<span class="text-danger">*</span>' . "\n";
-	echo '<input class="form-control" id="name" name="name" required="required" maxlength="255" pattern="^[\-a-z0-9]+$">' . "\n";
+	echo '<input class="form-control" id="name" name="name" required="required" maxlength="255" pattern="[\-a-z0-9]+">' . "\n";
 	echo '<div class="form-text">Επιτρέπονται μόνο πεζοί λατινικοί χαρακτήρες, αριθμητικά ψηφία και παύλες ("-").</div>' . "\n";
 	echo '</div>' . "\n";
 	echo '<div class="m-2">' . "\n";
