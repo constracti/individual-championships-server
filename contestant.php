@@ -2,7 +2,7 @@
 
 require_once 'common.php';
 
-$organization = new Organization();
+$organization = Organization::load();
 
 $team = $organization->requestTeamOrNull();
 
@@ -56,8 +56,7 @@ if ( !is_null( $action ) ) {
 		'team' => $team?->index,
 		'contestant' => $contestant->index,
 	] );
-	header( 'location: ' . $href );
-	exit;
+	page_redirect( $href );
 }
 
 $page = new Page();
@@ -72,7 +71,7 @@ $page->body_add( function() use ( $organization, $team, $contestant ): void {
 	echo sprintf( '<a href="%s" class="m-2 btn btn-secondary bi bi-arrow-left"></a>', $href ) . "\n";
 	echo '</div>' . "\n";
 	echo sprintf( '<div class="m-2">%s</div>', contestantLabel( $contestant ) ) . "\n";
-	$championshipList = enumerated( $organization->json->championshipList );
+	$championshipList = enumerated( $organization->data->championshipList );
 	foreach ( $championshipList as $championship ) {
 		if ( !championshipValid( $championship->value ) )
 			continue;
@@ -95,7 +94,7 @@ $page->body_add( function() use ( $organization, $team, $contestant ): void {
 			] );
 			echo sprintf( '<a class="bi bi-dash-lg link-danger m-1" href="%s"></a>', $href ) . "\n";
 			foreach ( $unit->contestantList as $cid ) {
-				$c = $organization->json->contestantList[$cid];
+				$c = $organization->data->contestantList[$cid];
 				echo '<div class="m-1 border-start"></div>' . "\n";
 				echo sprintf( '<div class="m-1">%s</div>', contestantLabel( $c ) ) . "\n";
 			}
@@ -115,7 +114,7 @@ $page->body_add( function() use ( $organization, $team, $contestant ): void {
 				] );
 				echo sprintf( '<a class="bi bi-plus-lg link-success m-1" href="%s"></a>', $href ) . "\n";
 				foreach ( $unit->contestantList as $cid ) {
-					$c = $organization->json->contestantList[$cid];
+					$c = $organization->data->contestantList[$cid];
 					echo '<div class="m-1 border-start"></div>' . "\n";
 					echo sprintf( '<div class="m-1">%s</div>', contestantLabel( $c ) ) . "\n";
 				}

@@ -6,37 +6,72 @@ class Organization {
 	const PATH = '../json';
 
 	var $name;
+	var $hash;
 	var $time;
-	var $json;
+	var $data;
 
-	function __construct() {
+	private function __construct( string $name, string $hash, int $time, object $data ) {
+		$this->name = $name;
+		$this->hash = $hash;
+		$this->time = $time;
+		$this->data = $data;
+	}
+
+	private static function filterName( string $name ): void {
+		$var = filter_var( $name, FILTER_VALIDATE_REGEXP, [
+			'options' => [
+				'default' => NULL,
+				'regexp' => '/^[-a-z0-9]{1,255}$/',
+			],
+		] );
+		if ( is_null( $var ) )
+			exit( 'Organization::filterName: filter_var');
+	}
+
+	static function create( string $name, string $password, string $text ): Organization {
+		Organization::filterName( $name );
+		$hash = password_hash( $password, PASSWORD_DEFAULT );
+		$data = json_decode( $text );
+		if ( is_null( $data ) )
+			exit( 'Organization::create: json_decode' );
+		$time = time();
+		$organization = new Organization( $name, $hash, $time, $data );
+		$path = self::PATH . '/' . $name . '.json';
+		if ( file_exists( $path ) ) {
+			$text = file_get_contents( $path );
+			if ( $text === FALSE )
+				exit( 'Organization::create: file_get_contents' );
+			$json = json_decode( $text );
+			if ( is_null( $json ) )
+				exit( 'Organization::create: json_decode' );
+			if ( !password_verify( $password, $json->hash ) )
+				exit( 'Organization::create: password_verify' );
+		}
+		$organization->save();
+		return $organization;
+	}
+
+	static function load(): Organization {
 		$name = requestStr( 'organization' );
-		$file_list = scandir( self::PATH );
-		if ( $file_list === FALSE )
-			exit( 'Organization::__construct: scandir' );
-		$file_list = array_filter( $file_list, function( string $file ) use ( $name ): bool {
-			return str_ends_with( $file, '.json' ) && ( $file === $name . '.json' );
-		} );
-		$file_list = array_values( $file_list );
-		if ( count( $file_list ) !== 1 )
-			exit( 'Organization::__construct: count' );
-		$path = self::PATH . '/' . $file_list[0];
-		$time = filemtime( $path );
-		if ( $time === FALSE )
-			exit( 'Organizaton::__construct: filemtime' );
+		Organization::filterName( $name );
+		$path = self::PATH . '/' . $name . '.json';
+		if ( !file_exists( $path ) )
+			exit( 'Organization::load: file_exists' );
 		$text = file_get_contents( $path );
 		if ( $text === FALSE )
-			exit( 'Organization::__construct: file_get_contents' );
+			exit( 'Organization::load: file_get_contents' );
 		$json = json_decode( $text );
 		if ( is_null( $json ) )
-			exit( 'Organization::__construct: json_decode' );
-		$this->name = $name;
-		$this->time = $time;
-		$this->json = $json;
+			exit( 'Organization::load: json_decode' );
+		return new Organization( $name, $json->hash, $json->time, $json->data );
 	}
 
 	function save(): void {
-		$json = $this->json;
+		$json = (object) [
+			'hash' => $this->hash,
+			'time' => $this->time,
+			'data' => $this->data,
+		];
 		$text = json_encode( $json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
 		if ( $text === FALSE )
 			exit( 'Organization::save: json_encode' );
@@ -52,23 +87,23 @@ class Organization {
 		$var = requestIntOrNull( 'team' );
 		if ( is_null( $var ) )
 			return NULL;
-		if ( $var < 0 || $var >= count( $this->json->teamList ) )
+		if ( $var < 0 || $var >= count( $this->data->teamList ) )
 			exit( 'Organization::requestTeamOrNull' );
-		return $this->json->teamList[$var];
+		return $this->data->teamList[$var];
 	}
 
 	function requestContestant(): object {
 		$var = requestInt( 'contestant' );
-		if ( $var < 0 || $var >= count( $this->json->contestantList ) )
+		if ( $var < 0 || $var >= count( $this->data->contestantList ) )
 			exit( 'Organization::requestContestant' );
-		return $this->json->contestantList[$var];
+		return $this->data->contestantList[$var];
 	}
 
 	function requestChampionship(): object {
 		$var = requestInt( 'championship' );
-		if ( $var < 0 || $var >= count( $this->json->championshipList ) )
+		if ( $var < 0 || $var >= count( $this->data->championshipList ) )
 			exit( 'Organization::requestChampionship' );
-		$var = $this->json->championshipList[$var];
+		$var = $this->data->championshipList[$var];
 		if ( !championshipValid( $var ) )
 			exit( 'Organization::requestChampionship' );
 		return $var;

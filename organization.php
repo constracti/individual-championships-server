@@ -2,14 +2,14 @@
 
 require_once 'common.php';
 
-$organization = new Organization();
+$organization = Organization::load();
 
 $page = new Page();
 
 $page->body_add( function() use ( $organization ): void {
 	echo '<h2 class="m-2">Πρωταθλήματα</h2>' . "\n";
 	echo '<div class="m-2 list-group">' . "\n";
-	foreach ( $organization->json->championshipList as $championship ) {
+	foreach ( $organization->data->championshipList as $championship ) {
 		$icon_class = championshipValid( $championship ) ? 'bi-unlock' : 'bi-lock';
 		echo '<div class="list-group-item d-flex flex-row p-1 align-items-center">' . "\n";
 		echo sprintf( '<span class="m-1 bi %s"></span>', $icon_class ) . "\n";
@@ -28,7 +28,7 @@ $page->body_add( function() use ( $organization ): void {
 		'team' => NULL,
 	] );
 	echo sprintf( '<a href="%s" class="list-group-item list-group-item-action">(όλες οι ομάδες)</a>', $href ) . "\n";
-	foreach ( $organization->json->teamList as $team ) {
+	foreach ( $organization->data->teamList as $team ) {
 		$href = page_url( 'team.php', [
 			'organization' => $organization->name,
 			'team' => $team->index,

@@ -2,7 +2,7 @@
 
 require_once 'common.php';
 
-$organization = new Organization();
+$organization = Organization::load();
 
 $team = $organization->requestTeamOrNull();
 
@@ -19,7 +19,7 @@ $page->body_add( function() use ( $organization, $team ): void {
 	echo sprintf( '<p class="m-2">%s</p>', $team?->name ?? '(όλες οι ομάδες)' ) . "\n";
 	echo '<h2 class="m-2">Επιλογή Διαγωνιζόμενου</h2>' . "\n";
 	echo '<div class="list-group m-2">' . "\n";
-	$contestantList = array_filter( $organization->json->contestantList, function( object $contestant ) use ( $team ) : bool {
+	$contestantList = array_filter( $organization->data->contestantList, function( object $contestant ) use ( $team ) : bool {
 		return is_null( $team ) || $contestant->team === $team->index;
 	} );
 	usort( $contestantList, function( object $contestant1, object $contestant2 ): int {

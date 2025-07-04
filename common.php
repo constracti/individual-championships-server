@@ -20,6 +20,11 @@ function page_url( string $path, array $param_list ): string {
 	return $path . '?' . http_build_query( $param_list );
 }
 
+function page_redirect( string $href ): void {
+	header( 'location: ' . $href );
+	exit;
+}
+
 function requestStrOrNull( string $key ): ?string {
 	if ( !isset( $_GET[$key] ) )
 		return NULL;
@@ -48,6 +53,12 @@ function requestInt( string $key ): int {
 	if ( is_null( $var ) )
 		exit( 'requestInt: ' . $key );
 	return $var;
+}
+
+function postStr( string $key ): string {
+	if ( !isset( $_POST[$key] ) )
+		exit( 'postStr: ' . $key );
+	return $_POST[$key];
 }
 
 function contestantLabel( object $contestant ): string {
