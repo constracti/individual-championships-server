@@ -28,24 +28,24 @@ class Organization {
 			exit( 'Organization::filterName: filter_var');
 	}
 
-	static function create( string $name, string $password, string $text ): Organization {
+	static function import( string $name, string $password, string $text ): Organization {
 		Organization::filterName( $name );
 		$hash = password_hash( $password, PASSWORD_DEFAULT );
 		$data = json_decode( $text );
 		if ( is_null( $data ) )
-			exit( 'Organization::create: json_decode' );
+			exit( 'Organization::import: json_decode' );
 		$time = time();
 		$organization = new Organization( $name, $hash, $time, $data );
 		$path = self::PATH . '/' . $name . '.json';
 		if ( file_exists( $path ) ) {
 			$text = file_get_contents( $path );
 			if ( $text === FALSE )
-				exit( 'Organization::create: file_get_contents' );
+				exit( 'Organization::import: file_get_contents' );
 			$json = json_decode( $text );
 			if ( is_null( $json ) )
-				exit( 'Organization::create: json_decode' );
+				exit( 'Organization::import: json_decode' );
 			if ( !password_verify( $password, $json->hash ) )
-				exit( 'Organization::create: password_verify' );
+				exit( 'Organization::import: password_verify' );
 		}
 		$organization->save();
 		return $organization;

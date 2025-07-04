@@ -38,6 +38,16 @@ $page->body_add( function() use ( $organization ): void {
 	echo '</div>' . "\n";
 } );
 
+$page->body_add( function() use ( $organization ): void {
+	echo '<h2 class="m-2">Εργαλεία</h2>' . "\n";
+	echo '<div class="d-flex flex-row">' . "\n";
+	$href = page_url( 'export.php', [
+		'organization' => $organization->name,
+	] );
+	echo sprintf( '<a href="%s" class="m-2 btn btn-secondary">Εξαγωγή</a>', $href ) . "\n";
+	echo '</div>' . "\n";
+} );
+
 $page->body_add( [ 'Page', 'credits' ] );
 
 $page->print();

@@ -18,7 +18,7 @@ $page->body_add( function(): void {
 $page->body_add( function(): void {
 	echo '<h2 class="m-2">Διαχείριση</h2>' . "\n";
 	echo '<div class="d-flex flex-row">' . "\n";
-	echo '<a href="create.php" class="m-2 btn btn-secondary">Δημιουργία</a>' . "\n";
+	echo '<a href="import.php" class="m-2 btn btn-secondary">Εισαγωγή</a>' . "\n";
 	echo '<a href="delete.php" class="m-2 btn btn-secondary">Διαγραφή</a>' . "\n";
 	echo '</div>' . "\n";
 } );

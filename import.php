@@ -3,9 +3,10 @@
 require_once 'common.php';
 
 // TODO block malicious submissions
+// TODO escape html characters
 
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
-	$organization = Organization::create( postStr( 'name' ), postStr( 'password' ), postStr( 'text' ) );
+	$organization = Organization::import( postStr( 'name' ), postStr( 'password' ), postStr( 'text' ) );
 	$href = page_url( 'organization.php', [
 		'organization' => $organization->name,
 	] );
@@ -16,7 +17,7 @@ $page = new Page();
 
 $page->body_add( function(): void {
 	echo '<form method="post" class="d-flex flex-column" autocomplete="off">' . "\n";
-	echo '<h2 class="m-2">Δημιουργία</h2>' . "\n";
+	echo '<h2 class="m-2">Εισαγωγή</h2>' . "\n";
 	echo '<div class="m-2">' . "\n";
 	echo '<label class="form-label" for="name">Όνομα</label>' . "\n";
 	echo '<span class="text-danger">*</span>' . "\n";
@@ -31,7 +32,7 @@ $page->body_add( function(): void {
 	echo '<div class="m-2">' . "\n";
 	echo '<label class="form-label" for="text">Περιεχόμενο</label>' . "\n";
 	echo '<span class="text-danger">*</span>' . "\n";
-	echo '<textarea class="form-control" id="text" name="text" required="required" style="resize: vertical;" rows="12"></textarea>' . "\n";
+	echo '<textarea class="form-control" id="text" name="text" required="required" style="resize: none;" rows="12"></textarea>' . "\n";
 	echo '<div class="form-text">Το περιεχόμενο πρέπει να ακολουθεί <a href="https://github.com/constracti/individual-championships" target="_blank">συγκεκριμένη μορφή JSON</a>.</div>' . "\n";
 	echo '</div>' . "\n";
 	echo '<div class="d-flex flex-row justify-content-between">' . "\n";
