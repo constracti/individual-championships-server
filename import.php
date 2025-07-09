@@ -8,7 +8,6 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 	$href = page_url( 'organization.php', [
 		'organization' => $organization->name,
 	] );
-	header( 'content-type: application/json' );
 	exit_ajax( [
 		'redirect' => $href,
 	] );
