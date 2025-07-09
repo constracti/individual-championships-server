@@ -3,8 +3,6 @@
 
 class Organization {
 
-	const PATH = '../json';
-
 	var $name;
 	var $hash;
 	var $time;
@@ -31,12 +29,16 @@ class Organization {
 	static function import( string $name, string $password, string $text ): Organization {
 		Organization::filterName( $name );
 		$hash = password_hash( $password, PASSWORD_DEFAULT );
+		if ( strlen( $text ) >= 1048575 ) // < 1MB
+			exit( 'Organization::import: strlen' );
 		$data = json_decode( $text );
 		if ( is_null( $data ) )
 			exit( 'Organization::import: json_decode' );
+		// TODO escape html characters
+		// TODO check json structure
 		$time = time();
 		$organization = new Organization( $name, $hash, $time, $data );
-		$path = self::PATH . '/' . $name . '.json';
+		$path = PATH . '/' . $name . '.json';
 		if ( file_exists( $path ) ) {
 			$text = file_get_contents( $path );
 			if ( $text === FALSE )
@@ -53,7 +55,7 @@ class Organization {
 
 	static function delete( string $name, string $password ): void {
 		Organization::filterName( $name );
-		$path = self::PATH . '/' . $name . '.json';
+		$path = PATH . '/' . $name . '.json';
 		if ( !file_exists( $path ) )
 			exit( 'Organization::delete: file_exists' );
 		$text = file_get_contents( $path );
@@ -71,7 +73,7 @@ class Organization {
 	static function load(): Organization {
 		$name = requestStr( 'organization' );
 		Organization::filterName( $name );
-		$path = self::PATH . '/' . $name . '.json';
+		$path = PATH . '/' . $name . '.json';
 		if ( !file_exists( $path ) )
 			exit( 'Organization::load: file_exists' );
 		$text = file_get_contents( $path );
@@ -95,7 +97,7 @@ class Organization {
 		$text = mb_ereg_replace( '    ', "\t", $text );
 		if ( $text === FALSE )
 			exit( 'Organization::save: mb_ereg_replace' );
-		$path = self::PATH . '/' . $this->name . '.json';
+		$path = PATH . '/' . $this->name . '.json';
 		if ( file_put_contents( $path, $text ) === FALSE )
 			exit( 'Organization::save: file_put_contents' );
 	}

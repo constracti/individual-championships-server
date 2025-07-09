@@ -1,5 +1,6 @@
 <?php
 
+require_once 'config.php';
 require_once 'class-page.php';
 require_once 'class-organization.php';
 
@@ -23,6 +24,11 @@ function page_url( string $path, array $param_list ): string {
 function page_redirect( string $href ): void {
 	header( 'location: ' . $href );
 	exit;
+}
+
+function exit_ajax( array $array ): void {
+	header( 'content-type: application/json' );
+	exit( json_encode( $array ) );
 }
 
 function requestStrOrNull( string $key ): ?string {
@@ -59,6 +65,29 @@ function postStr( string $key ): string {
 	if ( !isset( $_POST[$key] ) )
 		exit( 'postStr: ' . $key );
 	return $_POST[$key];
+}
+
+function postRecaptcha(): void {
+	$response = postStr( 'recaptcha' );
+	$ch = curl_init( 'https://www.google.com/recaptcha/api/siteverify' );
+	if ( $ch === FALSE )
+		exit( 'postRecaptcha::curl_init' );
+	if ( !curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE ) )
+		exit( 'postRecaptcha::curl_setopt: CURLOPT_RETURNTRANSFER' );
+	$data = [
+		'secret' => RECAPTCHA_SECRET_KEY,
+		'response' => $response,
+	];
+	if ( !curl_setopt( $ch, CURLOPT_POSTFIELDS, $data ) )
+		exit( 'postRecaptcha::curl_setopt: CURLOPT_POSTFIELDS' );
+	$response = curl_exec( $ch );
+	if ( $response === FALSE )
+		exit( 'postRecaptcha::curl_exec' );
+	$response = json_decode( $response );
+	if ( is_null( $response ) )
+		exit( 'postRecaptcha::json_decode' );
+	if ( !$response->success )
+		exit( 'postRecaptcha' );
 }
 
 function contestantLabel( object $contestant ): string {
