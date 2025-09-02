@@ -34,7 +34,14 @@ $page->body_add( function() use ( $organization, $team ): void {
 			'team' => $team?->index,
 			'contestant' => $contestant->index,
 		] );
-		echo sprintf( '<a href="%s" class="list-group-item list-group-item-action">%s</a>', $href, contestantLabel( $contestant ) ) . "\n";
+		echo sprintf( '<a href="%s" class="list-group-item list-group-item-action d-flex flex-row p-1 align-items-center">', $href ) . "\n";
+		echo sprintf( '<span class="m-1 flex-grow-1">%s</span>', contestantLabel( $contestant ) ) . "\n";
+		$count = count( array_filter( $organization->data->championshipList, function( object $championship ) use ( $contestant ): bool {
+			$unitList = $championship->roundList[0]->unitList;
+			return !is_null( contestantSearch( $contestant, $unitList ) );
+		} ) );
+		echo sprintf( '<span class="m-1 badge text-bg-secondary">%d</span>', $count ) . "\n";
+		echo '</a>' . "\n";
 	}
 	echo '</div>' . "\n";
 } );

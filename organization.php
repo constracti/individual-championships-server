@@ -27,13 +27,23 @@ $page->body_add( function() use ( $organization ): void {
 		'organization' => $organization->name,
 		'team' => NULL,
 	] );
-	echo sprintf( '<a href="%s" class="list-group-item list-group-item-action">(όλες οι ομάδες)</a>', $href ) . "\n";
+	$count = count( $organization->data->contestantList );
+	echo sprintf( '<a href="%s" class="list-group-item list-group-item-action d-flex flex-row p-1 align-items-center">', $href ) . "\n";
+	echo '<span class="m-1 flex-grow-1">(όλες οι ομάδες)</span>' . "\n";
+	echo sprintf( '<span class="m-1 badge text-bg-secondary">%d</span>', $count ) . "\n";
+	echo '</a>' . "\n";
 	foreach ( $organization->data->teamList as $team ) {
 		$href = page_url( 'team.php', [
 			'organization' => $organization->name,
 			'team' => $team->index,
 		] );
-		echo sprintf( '<a href="%s" class="list-group-item list-group-item-action">%d. %s</a>', $href, $team->index + 1, $team->name ) . "\n";
+		$count = count( array_filter( $organization->data->contestantList, function( object $contestant ) use ( $team ): bool {
+			return $contestant->team === $team->index;
+		} ) );
+		echo sprintf( '<a href="%s" class="list-group-item list-group-item-action d-flex flex-row p-1 align-items-center">', $href ) . "\n";
+		echo sprintf( '<span class="m-1 flex-grow-1">%d. %s</span>', $team->index + 1, $team->name ) . "\n";
+		echo sprintf( '<span class="m-1 badge text-bg-secondary">%d</span>', $count ) . "\n";
+		echo '</a>' . "\n";
 	}
 	echo '</div>' . "\n";
 } );

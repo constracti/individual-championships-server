@@ -15,7 +15,7 @@ case 'insert':
 	$championship = $organization->requestChampionship();
 	$unitList =& $championship->roundList[0]->unitList;
 	$uid = requestIntOrNull( 'unit' );
-	if ( !contestantSearch( $contestant, $unitList ) ) {
+	if ( is_null( contestantSearch( $contestant, $unitList ) ) ) {
 		if ( !is_null( $uid ) ) {
 			$contestantList =& $unitList[$uid]->contestantList;
 			if ( count( $contestantList ) < $championship->unitCap ) {

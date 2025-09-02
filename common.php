@@ -116,5 +116,5 @@ function contestantSearch( object $contestant, array $unitList ): ?int {
 		if ( in_array( $contestant->index, $unit->contestantList, TRUE ) )
 			return $uid;
 	}
-	return FALSE;
+	return NULL;
 }
