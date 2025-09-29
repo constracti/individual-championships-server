@@ -11,10 +11,14 @@ $page->body_add( function() use ( $organization ): void {
 	echo '<div class="m-2 list-group">' . "\n";
 	foreach ( $organization->data->championshipList as $championship ) {
 		$icon_class = championshipValid( $championship ) ? 'bi-unlock' : 'bi-lock';
-		echo '<div class="list-group-item d-flex flex-row p-1 align-items-center">' . "\n";
+		echo '<div class="list-group-item d-flex flex-column p-1">' . "\n";
+		echo '<div class="d-flex flex-row align-items-center">' . "\n";
 		echo sprintf( '<span class="m-1 bi %s"></span>', $icon_class ) . "\n";
 		echo sprintf( '<span class="m-1 flex-grow-1">%s</span>', $championship->name ) . "\n";
 		echo sprintf( '<div class="m-1 badge text-bg-secondary">&le;%d</div>', $championship->unitCap ) . "\n";
+		echo '</div>' . "\n";
+		if ( $championship->info !== '' )
+			echo sprintf( '<small class="m-1 fst-italic">%s</small>', $championship->info ) . "\n";
 		echo '</div>' . "\n";
 	}
 	echo '</div>' . "\n";
