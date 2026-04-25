@@ -20,7 +20,7 @@ class Page {
 		echo '<meta charset="utf-8">' . "\n";
 		echo '<meta name="viewport" content="width=device-width, initial-scale=1">' . "\n";
 		echo '<title>Ατομικά Πρωταθλήματα</title>' . "\n";
-		echo '<link rel="shortcut icon" href="strategy.png">' . "\n";
+		echo '<link rel="icon" href="strategy.png">' . "\n";
 		echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">' . "\n";
 		echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">' . "\n";
 		echo '</head>' . "\n";
